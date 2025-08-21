@@ -1,5 +1,12 @@
 package com.example.repository;
 
-public interface AdminRepository {
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.entity.Admin;
+
+@Repository
+public interface AdminRepository extends MongoRepository<Admin, Integer>{
+	Admin findByPhoneNo(long phoneNo);
 
 }
