@@ -1,11 +1,14 @@
 package com.example.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,28 +24,35 @@ public class UserServiceImpl implements UserService{
 	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
+	//Creating new user
 	@Override
 	public User createUser(int uId, String vin, String firstName, String lastName, String email, String password,
 			long phoneNo, MultipartFile picture) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		byte[] pictureBytes = picture.getBytes();
+		String encodedPassword = passwordEncoder.encode(password);
+		User user = new User(uId, vin, firstName, lastName, email, encodedPassword,
+				phoneNo, pictureBytes);
+		
+		return userRepository.save(user);
 	}
 
+	// Returning user image
 	@Override
 	public ResponseEntity<InputStreamResource> getUser(int uId) {
-		// TODO Auto-generated method stub
-		return null;
+		User user = userRepository.findById(uId).get();
+		InputStreamResource pictureResource = new InputStreamResource(new ByteArrayInputStream(user.getPicture()));
+		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(pictureResource);
 	}
 
+	// Returning user details
 	@Override
 	public User getUserDetails(int uId) {
-		// TODO Auto-generated method stub
-		return null;
+		return userRepository.findById(uId).get();
 	}
 
+	
 	@Override
 	public User getByPhoneNo(long phoneNo) {
 		// TODO Auto-generated method stub

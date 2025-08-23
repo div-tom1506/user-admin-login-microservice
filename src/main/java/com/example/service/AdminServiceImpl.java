@@ -1,11 +1,13 @@
 package com.example.service;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,25 +30,33 @@ public class AdminServiceImpl implements AdminService{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdminServiceImpl.class);
 
+	// creating new admin
 	@Override
 	public Admin createAdmin(int aId, String vin, String firstName, String lastName, String email, String password,
 			long phoneNo, MultipartFile picture) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		byte[] pictureBytes = picture.getBytes();
+		String encodedPassword = passwordEncoder.encode(password);
+		Admin admin = new Admin(aId, vin, firstName, lastName, email, encodedPassword, phoneNo, pictureBytes);
+		
+		return adminRepository.save(admin);
 	}
 
+	// Returning admin details
 	@Override
 	public Admin getAdminDetails(int aId) {
-		// TODO Auto-generated method stub
-		return null;
+		return adminRepository.findById(aId).get();
 	}
 
+	// Returning admin image
 	@Override
 	public ResponseEntity<InputStreamResource> getAdminPic(int aId) {
-		// TODO Auto-generated method stub
-		return null;
+		Admin admin = adminRepository.findById(aId).get();
+		InputStreamResource pictureResource = new InputStreamResource(new ByteArrayInputStream(admin.getPicture()));
+		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(pictureResource);
 	}
 
+	/. 
 	@Override
 	public Admin getAdminByPhoneNo(long phoneNo) {
 		// TODO Auto-generated method stub
