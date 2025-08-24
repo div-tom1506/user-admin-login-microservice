@@ -13,7 +13,7 @@ public interface UserService {
 	User createUser(int uId, String vin, String firstName, String lastName, String email, 
 			String password, long phoneNo, MultipartFile picture);
 	
-	ResponseEntity<InputStreamResource> getUser(int uId);
+	ResponseEntity<InputStreamResource> getUserPicture(int uId);
 	
 	User getUserDetails(int uId);
 	

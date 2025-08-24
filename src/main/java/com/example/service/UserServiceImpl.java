@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService{
 
 	// Returning user image
 	@Override
-	public ResponseEntity<InputStreamResource> getUser(int uId) {
+	public ResponseEntity<InputStreamResource> getUserPicture(int uId) {
 		User user = userRepository.findById(uId).get();
 		InputStreamResource pictureResource = new InputStreamResource(new ByteArrayInputStream(user.getPicture()));
 		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(pictureResource);
@@ -52,32 +52,47 @@ public class UserServiceImpl implements UserService{
 		return userRepository.findById(uId).get();
 	}
 
-	
+	// Returning user details with phone numbers
 	@Override
 	public User getByPhoneNo(long phoneNo) {
-		// TODO Auto-generated method stub
-		return null;
+		User user = userRepository.findByPhoneNo(phoneNo);
+		return user;
 	}
 
+	// To update User details
 	@Override
 	public User updateUser(int uId, String vin, String firstName, String lastName, String email, String password,
 			long phoneNo, MultipartFile picture) {
-		// TODO Auto-generated method stub
-		return null;
+		String encodedPassword = passwordEncoder.encode(password);
+		User existingUser;
+		
+		if (picture == null) {
+			User user = userRepository.findById(uId).get();
+			existingUser = new User(uId, vin, firstName, lastName, email, encodedPassword,
+					phoneNo, user.getPicture());
+			userRepository.save(existingUser);
+		} else {
+			byte[] pictureBytes = picture.getBytes();
+			existingUser = new User(uId, vin, firstName, lastName, email, encodedPassword,
+					phoneNo, pictureBytes);
+		}
+		
+		return existingUser;
 	}
 	
 	// to use patch type to only update password or photo or phone number
 
+	// To delete an user
 	@Override
 	public String deleteUser(int uId) {
-		// TODO Auto-generated method stub
-		return null;
+		userRepository.deleteById(uId);
+		return "User Deleted Successfully";
 	}
 
+	// To get all users
 	@Override
 	public List<User> showAllUsers() {
-		// TODO Auto-generated method stub
-		return null;
+		List<User> users = userRepository.findAll();
+		return users;
 	}
-
 }

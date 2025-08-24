@@ -50,7 +50,7 @@ public class AdminServiceImpl implements AdminService{
 
 	// Returning admin image
 	@Override
-	public ResponseEntity<InputStreamResource> getAdminPic(int aId) {
+	public ResponseEntity<InputStreamResource> getAdminPicture(int aId) {
 		Admin admin = adminRepository.findById(aId).get();
 		InputStreamResource pictureResource = new InputStreamResource(new ByteArrayInputStream(admin.getPicture()));
 		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(pictureResource);

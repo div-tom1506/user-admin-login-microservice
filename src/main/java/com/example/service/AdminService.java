@@ -16,7 +16,7 @@ public interface AdminService {
 	
 	Admin getAdminDetails(int aId);
 	
-	ResponseEntity<InputStreamResource> getAdminPic(int aId);
+	ResponseEntity<InputStreamResource> getAdminPicture(int aId);
 	
 	Admin getAdminByPhoneNo(long phoneNo);
 	
