@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.entity.User;
 import com.example.exception.NotFoundException;
+import com.example.exception.ValueAlreadyExistsException;
 import com.example.repository.UserRepository;
 
 @Service
@@ -29,9 +30,9 @@ public class UserServiceImpl implements UserService{
 	public User createUser(int uId, String vin, String firstName, String lastName, String email, String password,
 			long phoneNo, MultipartFile picture) throws IOException {
 		
-//		if (userRepository.findByPhoneNo(phoneNo)) {
-//			throw new ValueAlreadyExistsException("Phone number already exists");
-//		}
+		if (userRepository.findByPhoneNo(phoneNo).isPresent()) {
+			throw new ValueAlreadyExistsException("Phone number already exists");
+		}
 		
 		byte[] pictureBytes = picture.getBytes();
 		String encodedPassword = passwordEncoder.encode(password);
@@ -60,7 +61,8 @@ public class UserServiceImpl implements UserService{
 	// Returning user details with phone numbers
 	@Override
 	public User getByPhoneNo(long phoneNo) {
-		User user = userRepository.findByPhoneNo(phoneNo);
+		User user = userRepository.findByPhoneNo(phoneNo)
+				.orElseThrow(() -> new NotFoundException("User with phone number " + phoneNo + " not found"));
 		return user;
 	}
 

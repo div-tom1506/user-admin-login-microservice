@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.entity.Admin;
 import com.example.entity.User;
 import com.example.exception.NotFoundException;
+import com.example.exception.ValueAlreadyExistsException;
 import com.example.repository.AdminRepository;
 import com.example.repository.UserRepository;
 
@@ -33,9 +34,9 @@ public class AdminServiceImpl implements AdminService{
 	public Admin createAdmin(int aId, String vin, String firstName, String lastName, String email, String password,
 			long phoneNo, MultipartFile picture) throws IOException {
 		
-//		if (adminRepository.findByPhoneNo(phoneNo)) {
-//		throw new ValueAlreadyExistsException("Phone number already exists");
-//	}
+		if (adminRepository.findByPhoneNo(phoneNo).isPresent()) {
+		throw new ValueAlreadyExistsException("Phone number already exists");
+	}
 		
 		byte[] pictureBytes = picture.getBytes();
 		String encodedPassword = passwordEncoder.encode(password);
@@ -63,7 +64,8 @@ public class AdminServiceImpl implements AdminService{
 	// 
 	@Override
 	public Admin getAdminByPhoneNo(long phoneNo) {
-		Admin admin = adminRepository.findByPhoneNo(phoneNo);
+		Admin admin = adminRepository.findByPhoneNo(phoneNo)
+				.orElseThrow(() -> new NotFoundException("Admin with phone number " + phoneNo + " not found"));
 		return admin;
 	}
 
