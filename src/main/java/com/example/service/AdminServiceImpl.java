@@ -124,7 +124,7 @@ public class AdminServiceImpl implements AdminService{
 	}
 
 	@Override
-	public List<User> showAllUser() {
+	public List<User> showAllUsers() {
 		List<User> users = userRepository.findAll();
 		return users;
 	}

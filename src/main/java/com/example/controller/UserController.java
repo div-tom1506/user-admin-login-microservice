@@ -47,11 +47,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/phone/{ph}")
-	public User getByPhoneNo(@PathVariable("ph") int phoneNo) {
+	public User getByPhoneNo(@PathVariable("ph") long phoneNo) {
 		return userService.getByPhoneNo(phoneNo);
 	}
 	
-	@PutMapping("/update/{id}")
+	@PutMapping("/update")
 	public User updateUser(@RequestParam int uId, @RequestParam String vin, @RequestParam String firstName,
 			@RequestParam String lastName, @RequestParam String email, @RequestParam String password,
 			@RequestParam long phoneNo, @RequestBody MultipartFile picture) throws IOException {

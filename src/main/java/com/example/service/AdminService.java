@@ -28,14 +28,14 @@ public interface AdminService {
 	
 	String deleteAdmin(int aId);
 	
-	// USER
+	// User
 	
 	User getUserDetails(int uId);
 	
 	User updateUser(int uId, String vin, String firstName, String lastName, String email,
 			String password, long phoneNo, MultipartFile picture) throws IOException;
 	
-	List<User> showAllUser();
+	List<User> showAllUsers();
 	
 	String deleteUser(int uId);
 
