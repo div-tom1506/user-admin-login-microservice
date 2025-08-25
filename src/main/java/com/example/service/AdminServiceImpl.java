@@ -56,49 +56,74 @@ public class AdminServiceImpl implements AdminService{
 		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(pictureResource);
 	}
 
-	/. 
+	// 
 	@Override
 	public Admin getAdminByPhoneNo(long phoneNo) {
-		// TODO Auto-generated method stub
-		return null;
+		Admin admin = adminRepository.findByPhoneNo(phoneNo);
+		return admin;
 	}
 
 	@Override
 	public Admin updateAdmin(int aId, String vin, String firstName, String lastName, String email, String password,
 			long phoneNo, MultipartFile picture) {
-		// TODO Auto-generated method stub
-		return null;
+		String encodedPassword = passwordEncoder.encode(password);
+		Admin existingAdmin;
+		
+		if (picture == null) {
+			Admin admin = adminRepository.findById(aId).get();
+			existingAdmin = new Admin(aId, vin, firstName, lastName, email, encodedPassword,
+					phoneNo, admin.getPicture());
+			adminRepository.save(existingAdmin);
+		} else {
+			byte[] pictureBytes = picture.getBytes();
+			existingAdmin = new Admin(aId, vin, firstName, lastName, email, encodedPassword,
+					phoneNo, pictureBytes);
+		}
+		
+		return existingAdmin;
 	}
 
 	@Override
 	public String deleteAdmin(int aId) {
-		// TODO Auto-generated method stub
-		return null;
+		adminRepository.deleteById(uId);
+		return "Admin Deleted Successfully";
 	}
 
 	@Override
 	public User getUserDetails(int uId) {
-		// TODO Auto-generated method stub
-		return null;
+		return userRepository.findById(uId).get();
 	}
 
 	@Override
 	public User updateUser(int uId, String vin, String firstName, String lastName, String email, String password,
 			long phoneNo, MultipartFile picture) {
-		// TODO Auto-generated method stub
-		return null;
+		String encodedPassword = passwordEncoder.encode(password);
+		User existingUser;
+		
+		if (picture == null) {
+			User user = userRepository.findById(uId).get();
+			existingUser = new User(uId, vin, firstName, lastName, email, encodedPassword,
+					phoneNo, user.getPicture());
+			userRepository.save(existingUser);
+		} else {
+			byte[] pictureBytes = picture.getBytes();
+			existingUser = new User(uId, vin, firstName, lastName, email, encodedPassword,
+					phoneNo, pictureBytes);
+		}
+		
+		return existingUser;
 	}
 
 	@Override
 	public List<User> showAllUser() {
-		// TODO Auto-generated method stub
-		return null;
+		List<User> users = userRepository.findAll();
+		return users;
 	}
 
 	@Override
 	public String deleteUser(int uId) {
-		// TODO Auto-generated method stub
-		return null;
+		userRepository.deleteById(uId);
+		return "User Deleted Successfully";
 	}
 
 }
