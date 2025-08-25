@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.core.io.InputStreamResource;
@@ -11,7 +12,7 @@ import com.example.entity.User;
 public interface UserService {
 	
 	User createUser(int uId, String vin, String firstName, String lastName, String email, 
-			String password, long phoneNo, MultipartFile picture);
+			String password, long phoneNo, MultipartFile picture) throws IOException;
 	
 	ResponseEntity<InputStreamResource> getUserPicture(int uId);
 	
@@ -20,7 +21,7 @@ public interface UserService {
 	User getByPhoneNo(long phoneNo);
 	
 	User updateUser(int uId, String vin, String firstName, String lastName, String email, 
-			String password, long phoneNo, MultipartFile picture);
+			String password, long phoneNo, MultipartFile picture) throws IOException;
 	
 	// to use patch type to only update password or photo or phone number
 	

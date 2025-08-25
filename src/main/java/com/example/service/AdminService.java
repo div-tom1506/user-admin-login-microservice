@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.core.io.InputStreamResource;
@@ -12,7 +13,7 @@ import com.example.entity.User;
 public interface AdminService {
 	
 	Admin createAdmin(int aId, String vin, String firstName, String lastName, String email,
-			String password, long phoneNo, MultipartFile picture);
+			String password, long phoneNo, MultipartFile picture) throws IOException;
 	
 	Admin getAdminDetails(int aId);
 	
@@ -21,7 +22,7 @@ public interface AdminService {
 	Admin getAdminByPhoneNo(long phoneNo);
 	
 	Admin updateAdmin(int aId, String vin, String firstName, String lastName, String email,
-			String password, long phoneNo, MultipartFile picture);
+			String password, long phoneNo, MultipartFile picture) throws IOException;
 	
 	// to use patch type to only update password or photo or phone number
 	
@@ -32,13 +33,10 @@ public interface AdminService {
 	User getUserDetails(int uId);
 	
 	User updateUser(int uId, String vin, String firstName, String lastName, String email,
-			String password, long phoneNo, MultipartFile picture);
+			String password, long phoneNo, MultipartFile picture) throws IOException;
 	
 	List<User> showAllUser();
 	
 	String deleteUser(int uId);
-	
-	
-	
 
 }

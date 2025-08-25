@@ -1,10 +1,9 @@
 package com.example.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -15,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.entity.Admin;
 import com.example.entity.User;
+import com.example.exception.NotFoundException;
 import com.example.repository.AdminRepository;
 import com.example.repository.UserRepository;
 
@@ -27,13 +27,15 @@ public class AdminServiceImpl implements AdminService{
 	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AdminServiceImpl.class);
 
 	// creating new admin
 	@Override
 	public Admin createAdmin(int aId, String vin, String firstName, String lastName, String email, String password,
-			long phoneNo, MultipartFile picture) {
+			long phoneNo, MultipartFile picture) throws IOException {
+		
+//		if (adminRepository.findByPhoneNo(phoneNo)) {
+//		throw new ValueAlreadyExistsException("Phone number already exists");
+//	}
 		
 		byte[] pictureBytes = picture.getBytes();
 		String encodedPassword = passwordEncoder.encode(password);
@@ -45,13 +47,15 @@ public class AdminServiceImpl implements AdminService{
 	// Returning admin details
 	@Override
 	public Admin getAdminDetails(int aId) {
-		return adminRepository.findById(aId).get();
+		return adminRepository.findById(aId)
+				.orElseThrow(() -> new NotFoundException("Admin with ID " + aId + " not found"));
 	}
 
 	// Returning admin image
 	@Override
 	public ResponseEntity<InputStreamResource> getAdminPicture(int aId) {
-		Admin admin = adminRepository.findById(aId).get();
+		Admin admin = adminRepository.findById(aId)
+				.orElseThrow(() -> new NotFoundException("Admin with ID " + aId + " not found"));
 		InputStreamResource pictureResource = new InputStreamResource(new ByteArrayInputStream(admin.getPicture()));
 		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(pictureResource);
 	}
@@ -65,12 +69,13 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public Admin updateAdmin(int aId, String vin, String firstName, String lastName, String email, String password,
-			long phoneNo, MultipartFile picture) {
+			long phoneNo, MultipartFile picture) throws IOException {
 		String encodedPassword = passwordEncoder.encode(password);
 		Admin existingAdmin;
 		
 		if (picture == null) {
-			Admin admin = adminRepository.findById(aId).get();
+			Admin admin = adminRepository.findById(aId)
+					.orElseThrow(() -> new NotFoundException("Admin with ID " + aId + " not found"));
 			existingAdmin = new Admin(aId, vin, firstName, lastName, email, encodedPassword,
 					phoneNo, admin.getPicture());
 			adminRepository.save(existingAdmin);
@@ -85,23 +90,25 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public String deleteAdmin(int aId) {
-		adminRepository.deleteById(uId);
+		adminRepository.deleteById(aId);
 		return "Admin Deleted Successfully";
 	}
 
 	@Override
 	public User getUserDetails(int uId) {
-		return userRepository.findById(uId).get();
+		return userRepository.findById(uId)
+				.orElseThrow(() -> new NotFoundException("User with ID " + uId + " not found"));
 	}
 
 	@Override
 	public User updateUser(int uId, String vin, String firstName, String lastName, String email, String password,
-			long phoneNo, MultipartFile picture) {
+			long phoneNo, MultipartFile picture) throws IOException {
 		String encodedPassword = passwordEncoder.encode(password);
 		User existingUser;
 		
 		if (picture == null) {
-			User user = userRepository.findById(uId).get();
+			User user = userRepository.findById(uId)
+					.orElseThrow(() -> new NotFoundException("User with ID " + uId + " not found"));
 			existingUser = new User(uId, vin, firstName, lastName, email, encodedPassword,
 					phoneNo, user.getPicture());
 			userRepository.save(existingUser);
@@ -122,6 +129,10 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public String deleteUser(int uId) {
+		if (!userRepository.existsById(uId)) {
+			throw new NotFoundException("User with ID " + uId + " not found");
+		}
+		
 		userRepository.deleteById(uId);
 		return "User Deleted Successfully";
 	}
